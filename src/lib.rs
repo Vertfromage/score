@@ -84,14 +84,14 @@ impl Score{
    pub fn add_self_to_submit(&mut self) -> String{
         // Not sure how much gas... need to adjust
         assert_eq!(env::attached_deposit(),10_u128.pow(24)/100,
-        "To add a score must use at least 0.01 Near to cover gas fees");
+        "To add a score must use at least 0.01 Near to cover backend gas fees");
 
         // add user to list to have score added
         let account_id = env::signer_account_id();
         // should only submit once...
         self.users_to_submit.insert(&account_id);
         // This assures the user that the score will be updated
-        return "The backend will upload your score to NEAR within 5 minutes.".to_string();
+        return "The backend will upload your score to NEAR shortly.".to_string();
    }
 
     // How many users waiting to submit... only need to call clear_users_to_submit if it's greater than 0
@@ -112,15 +112,26 @@ impl Score{
     /** IN CASE OF CHEATING */
 
    #[private] // For use when someone has cheated
-   pub fn reset_user_score(&mut self, account_id: AccountId) {
+   pub fn reset_user_score(&mut self, account_id: AccountId) -> String {
        // Should only insert if score is higher than previous score
        self.high_scores.insert(&account_id, &0);
+
+       return "User score reset to zero".to_string();
    }
 
    // For use when someone has cheated - if using this also find and add next highest score
    #[private] 
-   pub fn remove_leaderboard(&mut self, account_id: AccountId) {
+   pub fn remove_leaderboard(&mut self, account_id: AccountId) -> String{
         self.leader_board.remove(&account_id);
+        return "User removed from the leaderboard".to_string();
+    }
+
+    // For use when resetting the leaderboard incase of major updates.
+    #[private] 
+   pub fn empty_leaderboard(&mut self) -> String {
+        self.leader_board.clear();
+        assert_eq!(self.leader_board.len(), 0);
+        return "Leaderboard emptied!".to_string();
     }
 }
 
