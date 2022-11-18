@@ -34,7 +34,9 @@ near call $ID add_self_to_submit --accountId someone.testnet --amount 0.01
 
 near view $ID users_waiting_to_submit
 
-near call $ID clear_users_to_submit --accountId $ID
+near view $ID get_users_to_submit
+
+near call $ID clear_user_to_submit '{"account_id" : "someone.testnet"}' --accountId $ID
 
 near call $ID reset_user_score '{"account_id":"someone.testnet"}' --accountId $ID
 

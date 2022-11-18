@@ -46,10 +46,11 @@ impl Score{
    }
 
    #[private]
-   pub fn insert_leaderboard(&mut self, account_id: AccountId, value: u128) {
+   pub fn insert_leaderboard(&mut self, account_id: AccountId, value: u128) -> bool{
         // until list up to size add score
         if self.leader_board.len() < self.size_of_leaderboard.into() {
             self.leader_board.insert(&account_id, &value);
+            return true;
         }else{
         let mut smallest = value;
         let mut key : AccountId = account_id.clone();
@@ -63,14 +64,16 @@ impl Score{
         if smallest < value {
             self.leader_board.remove(&key);
             self.leader_board.insert(&account_id, &value);
+            return true;
         }
+        return false;
     }
     }
 
    
     // view leaderboard
     pub fn get_leaderboard(&self) -> Vec<(AccountId, u128)> {
-        return self.leader_board.to_vec();
+        return self.leader_board.to_vec()
     }
 
     // view user's high score
@@ -99,14 +102,19 @@ impl Score{
         self.users_to_submit.len() > 0
     }
    
-   // clears and returns all users waiting to have scores submitted
-   // could have bug if someones adding name at same time users_to_submit is getting cleared,
-   // might need to clear by names assuming it's unlikely someone would submit repeatedly
+   // returns all users waiting to have scores submitted
+   pub fn get_users_to_submit(&self) -> Vec<AccountId> {
+        return self.users_to_submit.to_vec()
+   }
+
+   // clears a user from users waiting to submit. 
    #[private]
-   pub fn clear_users_to_submit(&mut self) -> Vec<AccountId> {
-        let users : Vec<AccountId> = self.users_to_submit.to_vec();
-        self.users_to_submit.clear();
-        return users;
+   pub fn clear_user_to_submit(&mut self, account_id: AccountId) -> bool {
+        if self.users_to_submit.contains(&account_id) {
+            self.users_to_submit.remove(&account_id);
+            return true;
+        }
+        return false;
    }
 
     /** IN CASE OF CHEATING */
