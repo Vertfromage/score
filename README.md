@@ -30,6 +30,7 @@ near view $ID get_leaderboard
 near view $ID get_score '{"account_id":"someone.testnet"}'
 
 // NOTE: need to have someone.testnet's wallet key / logged in
+
 near call $ID add_self_to_submit --accountId someone.testnet --amount 0.01   
 
 near view $ID users_waiting_to_submit
